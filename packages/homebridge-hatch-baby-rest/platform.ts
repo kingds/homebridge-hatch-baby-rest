@@ -14,7 +14,7 @@ import { RestoreAccessory } from './restore-accessory'
 import { RestIot } from './rest-iot'
 import { Restore } from './restore'
 
-export const pluginName = 'homebridge-hatch-baby-rest'
+export const pluginName = 'homebridge-hatch-baby-rest-kingds'
 export const platformName = 'HatchBabyRest'
 
 export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
