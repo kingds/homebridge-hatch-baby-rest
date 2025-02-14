@@ -21,7 +21,7 @@ export class RestoreAccessory extends BaseAccessory {
           `Turning ${on ? `on first ${stepName} for` : 'off'} ${restore.name}`,
         )
         if (on) {
-          restore.turnOnRoutine()
+          restore.turnOnRoutine(0)
         } else {
           restore.turnOff()
         }

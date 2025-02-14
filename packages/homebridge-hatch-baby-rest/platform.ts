@@ -13,6 +13,7 @@ import type {
 import { RestoreAccessory } from './restore-accessory'
 import { RestIot } from './rest-iot'
 import { Restore } from './restore'
+import { RoutineButtonAccessory } from './routine-button-accessory'
 
 export const pluginName = 'homebridge-hatch-baby-rest-kingds'
 export const platformName = 'HatchBabyRest'
@@ -134,8 +135,10 @@ export class HatchBabyRestPlatform implements DynamicPlatformPlugin {
         homebridgeAccessory =
           this.homebridgeAccessories[uuid] || createHomebridgeAccessory()
 
-      if (device instanceof Restore || device instanceof RestIot) {
+      if (device instanceof Restore) {
         new RestoreAccessory(device, homebridgeAccessory)
+      } else if (device instanceof RestIot) {
+        new RoutineButtonAccessory(device, homebridgeAccessory)
       } else if ('onBrightness' in device) {
         new LightAndSoundMachineAccessory(device, homebridgeAccessory)
       } else {

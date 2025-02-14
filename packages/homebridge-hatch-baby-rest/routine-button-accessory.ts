@@ -1,33 +1,28 @@
-import { Service, Characteristic } from 'homebridge';
+import { Service, Characteristic, PlatformAccessory, CharacteristicValue } from "homebridge"
 import { RestIot } from './rest-iot';
+import { BaseAccessory } from "shared/base-accessory"
+import { RestIotState } from "shared/hatch-sleep-types"
+import { hap } from "shared/hap"
 
-export class RoutineButtonAccessory {
-  private service: Service;
-  private currentRoutineIndex = 0;
-  private routines: any[] = [];
+export class RoutineButtonAccessory extends BaseAccessory {
+  constructor(device : RestIot, accessory: PlatformAccessory) {
+    super(device, accessory);
 
-  constructor(private readonly device: RestIot, private readonly api: any) {
-    this.service = new this.api.hap.Service.StatelessProgrammableSwitch();
-    this.service.getCharacteristic(this.api.hap.Characteristic.ProgrammableSwitchEvent)
-      .onSet(this.handlePress.bind(this));
+    const { Service, Characteristic } = hap,
+      service = this.getService(Service.StatelessProgrammableSwitch)
 
-    this.device.fetchRoutines().then(routines => {
-      this.routines = routines;
-    });
-  }
+    service.getCharacteristic(Characteristic.ProgrammableSwitchEvent)
+      .onSet(async (value: CharacteristicValue) => {
+        const eventValue = value as number; // Explicitly cast to number
 
-  private async handlePress(value: number) {
-    if (value === this.api.hap.Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS) {
-      this.currentRoutineIndex = (this.currentRoutineIndex + 1) % this.routines.length;
-      const nextRoutine = this.routines[this.currentRoutineIndex];
-      this.device.update({ current: { playing: 'routine', srId: nextRoutine.id } });
-    } else if (value === this.api.hap.Characteristic.ProgrammableSwitchEvent.LONG_PRESS) {
-      this.device.turnOff();
-    }
-  }
+        if (eventValue === Characteristic.ProgrammableSwitchEvent.SINGLE_PRESS) {
+          device.nextStep()
+        } else if (eventValue === Characteristic.ProgrammableSwitchEvent.LONG_PRESS) {
+          device.turnOff();
+        }
+      });
 
-  getServices(): Service[] {
-    return [this.service];
+    service.setPrimaryService(true)
   }
 }
 
