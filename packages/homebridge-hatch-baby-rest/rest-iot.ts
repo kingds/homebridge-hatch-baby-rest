@@ -48,9 +48,16 @@ export class RestIot extends IotDevice<RestIotState> implements BaseDevice {
     })
   }
 
-  async turnOnRoutine() {
+  private currentRoutineIndex = -1;
+  async turnOnRoutine(index : number) {
     const routines = await this.fetchRoutines()
-    this.setCurrent('routine', 1, routines[0].id)
+    this.setCurrent('routine', 1, routines[index].id)
+    this.currentRoutineIndex = index
+  }
+
+
+  async nextStep() {
+    this.turnOnRoutine(this.currentRoutineIndex + 1)
   }
 
   turnOff() {

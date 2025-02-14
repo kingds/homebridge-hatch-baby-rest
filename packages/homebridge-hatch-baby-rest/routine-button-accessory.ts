@@ -8,7 +8,6 @@ export class RoutineButtonAccessory {
 
   constructor(private readonly device: RestIot, private readonly api: any) {
     this.service = new this.api.hap.Service.StatelessProgrammableSwitch();
-
     this.service.getCharacteristic(this.api.hap.Characteristic.ProgrammableSwitchEvent)
       .onSet(this.handlePress.bind(this));
 
